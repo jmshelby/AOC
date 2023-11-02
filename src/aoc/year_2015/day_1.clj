@@ -2,6 +2,8 @@
   (:require [clojure.string :as s]
             [aoc.client :as aoc]))
 
+(def input (delay (aoc/get-my-input)))
+
 (def dir->op
   {\( inc
    \) dec})
@@ -20,14 +22,24 @@
                (rest dirs)))
       )))
 
+(defn answer []
+  (second
+    (take-while-good @input
+                     (constantly false))))
+
+(defn answer-2 []
+  (first
+    (take-while-good @input
+                     (fn [f _]
+                       (= -1 f)))))
+
 (comment
 
-  (take-while-good (aoc/get-first-input 2015 1)
-                   (constantly false))
 
-  (take-while-good (aoc/get-first-input 2015 1)
-                   (fn [f _]
-                     (= -1 f)))
+  (answer)
+
+  (answer-2)
+
 
 
   )
