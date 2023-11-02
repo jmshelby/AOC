@@ -2,6 +2,8 @@
   (:require [clojure.string :as s]
             [aoc.client :as aoc]))
 
+(defonce INPUT (delay (aoc/get-my-input)))
+
 (def translation
   "Part One"
   {"A" :rock
@@ -95,29 +97,12 @@
 
 (comment
 
-  (def example
-    "A Y
-B X
-C Z")
+  (parse @INPUT)
 
-(round->points :rock :paper)
-
-(map (partial apply round->points) (list (list :rock :paper)))
-
-  (parse example)
-
-  (answer example)
-
-  (answer (aoc/get-first-input 2022 2))
+  (answer @INPUT)
   ;; => 13526
 
-  (answer-2 example)
-
-  (answer-2 (aoc/get-first-input 2022 2))
+  (answer-2 @INPUT)
   ;; => 14204
 
-
-
   )
-
-;;
