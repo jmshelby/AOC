@@ -3,9 +3,7 @@
             [clojure.set :as set]
             [aoc.client :as aoc]))
 
-(defonce input (aoc/get-first-input 2022 3))
-
-(aoc/get-my-input)
+(defonce INPUT (delay (aoc/get-my-input)))
 
 (defn- range* [a b]
   (map char
@@ -54,27 +52,14 @@
 
 (comment
 
-  (def example
-    "")
+  (parse-compartments @INPUT)
 
-  input
+  (parse-groups @INPUT)
 
-  (parse-groups input)
-
-  (parse-groups input)
-
-  (parse input)
-
-  (answer input)
+  (answer @INPUT)
   ;; => 7967
 
-  (answer-2 input)
+  (answer-2 @INPUT)
   ;; => 2716
 
-
   )
-
-
-
-
-;;
