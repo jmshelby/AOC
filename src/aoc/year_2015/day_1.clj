@@ -2,7 +2,7 @@
   (:require [clojure.string :as s]
             [aoc.client :as aoc]))
 
-(def input (delay (aoc/get-my-input)))
+(def INPUT (delay (aoc/get-my-input)))
 
 (def dir->op
   {\( inc
@@ -19,27 +19,25 @@
                         floor)]
         (recur (inc dir-count)
                next-floor
-               (rest dirs)))
-      )))
+               (rest dirs))))))
 
-(defn answer []
+(defn answer [input]
   (second
-    (take-while-good @input
+    (take-while-good input
                      (constantly false))))
 
-(defn answer-2 []
+(defn answer-2 [input]
   (first
-    (take-while-good @input
+    (take-while-good input
                      (fn [f _]
                        (= -1 f)))))
 
 (comment
 
+  (answer @INPUT)
+  ;; => 138
 
-  (answer)
-
-  (answer-2)
-
-
+  (answer-2 @INPUT)
+  ;; => 1771
 
   )

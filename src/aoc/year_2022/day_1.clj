@@ -1,6 +1,9 @@
 (ns year-2022.day-1
   (:require [clojure.string :as s]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io]
+            [aoc.client :as aoc]))
+
+(def INPUT (delay (aoc/get-my-input)))
 
 (defn rcompare
   "Just compare in reverse"
@@ -31,41 +34,12 @@
 
 (comment
 
-  (def example
-    "1000
-2000
-3000
+  (parse @INPUT)
 
-4000
+  (answer @INPUT)
+  ;; => 70509
 
-5000
-6000
-
-7000
-8000
-9000
-
-10000
-
-")
-
-
-
-  (parse example)
-
-  (answer example)
-
-  (let [input (slurp (io/resource "inputs/2022/day_1"))]
-    (time (answer input)))
-  ;; => 70509 (my correct answer)
-
-
-  (answer-2 example)
-
-  (let [input (slurp (io/resource "inputs/2022/day_1"))]
-    (time (answer-2 input)))
-;; => 208567
+  (answer-2 @INPUT)
+  ;; => 208567
 
   )
-
-;;
