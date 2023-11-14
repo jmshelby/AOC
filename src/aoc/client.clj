@@ -10,6 +10,12 @@
             {:headers {"Cookie" cookie}})
     :body))
 
+(defn get-problem [year day]
+  (->>
+    (ht/get (str "https://adventofcode.com/" year "/day/" day)
+            {:headers {"Cookie" cookie}})
+    :body))
+
 ;; TODO - prompt for session cookie if not valid, store it in a file
 (defn get-my-input []
   (let [ns (str *ns*)
@@ -22,5 +28,13 @@
                       {:your-ns ns})))))
 
 (comment
+
+
+  (println
+    (get-input 2022 4))
+
+  (println
+    (get-problem 2022 4))
+
 
   )
