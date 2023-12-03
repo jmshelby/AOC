@@ -2,18 +2,19 @@
   (:require [clojure.string :as s]
             [clj-http.client :as ht]))
 
-(def cookie "session=53616c7465645f5f90d2182abe425ef84f90ce779fb3635192ca0691ecd00a56b6c5eb513633c9fe3d188bf44124a59d4fcfdcbcd68e5e1d32e3de1d72f0cc59; _gat=1;")
+(defn get-cookie []
+  (str "session=" (slurp ".cookie-session")))
 
 (defn get-input [year day]
   (->>
     (ht/get (str "https://adventofcode.com/" year "/day/" day "/input")
-            {:headers {"Cookie" cookie}})
+            {:headers {"Cookie" (get-cookie)}})
     :body))
 
 (defn get-problem [year day]
   (->>
     (ht/get (str "https://adventofcode.com/" year "/day/" day)
-            {:headers {"Cookie" cookie}})
+            {:headers {"Cookie" (get-cookie)}})
     :body))
 
 ;; TODO - prompt for session cookie if not valid, store it in a file
@@ -36,5 +37,6 @@
   (println
     (get-problem 2022 4))
 
+  (get-cookie)
 
   )
