@@ -83,7 +83,6 @@
        (mapcat neighbors-of-coord)
        set))
 
-
 (defn- add-neighbors [schem]
   (update schem :parts
           (fn [parts]
@@ -132,8 +131,7 @@
                                                      (map second)
                                                      (filter (fn [part]
                                                                (contains? (:neighbors part) star-coord)))
-                                                     (map :value)
-                                                     )})))
+                                                     (map :value))})))
         ;; Just filter to at least 2 adjacent parts
         gears      (filter #(< 1 (count (:adjacent-parts %))) stars)
         ;; The product of each gear's adjacent part number values
