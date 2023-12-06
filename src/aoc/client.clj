@@ -21,11 +21,11 @@
 (defn get-my-input []
   (let [ns (str *ns*)
         [found? year day]
-        (re-matches #"year-(\d{4})\.day-(\d{1,2})" ns)]
+        (re-matches #"aoc.year-(\d{4})\.day-(\d{1,2})" ns)]
     (if found?
       (get-input year day)
       (throw (ex-info (str "Can't determine your current year/day for 'advent of code'. "
-                           "Is your namespace in the form: 'year-[XXXX].day-XX'?")
+                           "Is your namespace in the form: 'aoc.year-[XXXX].day-XX'?")
                       {:your-ns ns})))))
 
 (comment

@@ -1,4 +1,4 @@
-(ns year-2023.day-2
+(ns aoc.year-2023.day-2
   (:require [clojure.string :as s]
             [clojure.set :as set]
             [aoc.client :as aoc]))

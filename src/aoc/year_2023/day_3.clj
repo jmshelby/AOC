@@ -1,4 +1,4 @@
-(ns year-2023.day-3
+(ns aoc.year-2023.day-3
   (:require [clojure.string :as s]
             [clojure.set :as set]
             [aoc.client :as aoc]))
@@ -166,10 +166,6 @@
   (parse sample)
 
   (parse INPUT)
-
-
-
-
 
   (answer-1 sample)
   ;; => 4361
