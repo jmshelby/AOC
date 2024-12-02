@@ -6,8 +6,7 @@
 
 (def INPUT (aoc/get-my-input))
 
-
-(defn answer-1 [in]
+(defn input->cards [in]
   (->> in
        s/split-lines
        (map s/trim)
@@ -18,7 +17,8 @@
                           (keep parse-long)
                           set))
                    [winning scratched])))
-       (map (fn [[winning scratched]]
+       (map-indexed vector)
+       (map (fn [[idx [winning scratched]]]
               (let [wins
                     (set/intersection winning scratched)
                     factor (->> wins
@@ -28,13 +28,37 @@
                     points (if (zero? (count wins))
                              0
                              (pow 2 factor))]
-                {:winning   winning
+                {:card-no   (inc idx)
+                 :winning   winning
                  :scratched scratched
                  :wins      wins
                  :factor    factor
-                 :points    points})))
+                 :points    points})))))
+
+(defn answer-1 [in]
+  (->> in
+       input->cards
        (map :points)
        (apply +)))
+
+(defn answer-2 [in]
+  (let [cards     (input->cards in)
+        card-wins (->> cards
+                       (map (fn [{:keys [card-no :wins]}]
+                              [card-no (count wins)]))
+                       vec)
+        with-copies
+        (loop [[this & left] card-wins
+               out           []]
+          (if this
+            (let [this-no   (first this)
+                  this-wins (second this)
+                  copy-nos  (range this-no (+ this-no this-wins) 1)
+                  copies    (map #(get card-wins %) copy-nos)]
+              (recur (concat left copies) (conj out this)))
+            out))]
+    ;; Answer is total number of cards + copies
+    (count with-copies)))
 
 (comment
 
@@ -52,6 +76,9 @@
 
   (answer-1 INPUT);; => 32609.0
 
+  (answer-2 sample)
+
+  (answer-2 INPUT)
 
 
 
