@@ -30,14 +30,19 @@
 
   (println INPUT)
 
-  (->> INPUT
-       (re-seq #"(\d+)\W+(\d+)")
-       (map (fn [[_ a b]]
-              [a b]))
-       (map #(map parse-long %))
-       unzip
-       ()
-       )
+  (as-> INPUT *
+    (re-seq #"(\d+)\W+(\d+)" *)
+    (map (fn [[_ a b]]
+           [a b]) *)
+    (map #(map parse-long %) *)
+    (unzip *)
+    (update * :a-list sort)
+    (update * :b-list sort)
+    (interleave (:a-list *) (:b-list *))
+    (partition 2 *)
+    (map (partial apply -) *)
+    (map abs)
+    )
 
 
   ;;
