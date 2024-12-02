@@ -5,7 +5,6 @@
 
 (def INPUT (aoc/get-my-input))
 
-
 (defn- unzip [zipped]
   (reduce (fn [acc [a-next b-next]]
             (-> acc
@@ -15,12 +14,23 @@
           zipped))
 
 (defn- parse-input [in]
-
-
-  )
+  (->> in
+       (re-seq #"(\d+)\W+(\d+)")
+       (map (fn [[_ a b]]
+              [a b]))
+       (map #(map parse-long %))))
 
 (defn answer-1 [input]
-  )
+  (as-> input *
+    (parse-input *)
+    (unzip *)
+    (update * :a-list sort)
+    (update * :b-list sort)
+    (interleave (:a-list *) (:b-list *))
+    (partition 2 *)
+    (map (partial apply -) *)
+    (map abs *)
+    (apply + *)))
 
 (defn answer-2 [input]
   )
@@ -30,20 +40,8 @@
 
   (println INPUT)
 
-  (as-> INPUT *
-    (re-seq #"(\d+)\W+(\d+)" *)
-    (map (fn [[_ a b]]
-           [a b]) *)
-    (map #(map parse-long %) *)
-    (unzip *)
-    (update * :a-list sort)
-    (update * :b-list sort)
-    (interleave (:a-list *) (:b-list *))
-    (partition 2 *)
-    (map (partial apply -) *)
-    (map abs *)
-    (apply + *)
-    )
+  (answer-1 INPUT)
+  ;; => 2192892
 
 
   ;;
