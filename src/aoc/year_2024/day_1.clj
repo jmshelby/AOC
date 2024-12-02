@@ -41,7 +41,8 @@
     (interleave (:a-list *) (:b-list *))
     (partition 2 *)
     (map (partial apply -) *)
-    (map abs)
+    (map abs *)
+    (apply + *)
     )
 
 
