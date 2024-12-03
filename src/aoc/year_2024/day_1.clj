@@ -33,6 +33,17 @@
     (apply + *)))
 
 (defn answer-2 [input]
+  (let [{:keys [a-list b-list]}
+        (->> input
+             parse-input
+             unzip
+             )
+        b-freq (frequencies b-list)]
+    (->> a-list
+         (map #(* % (get b-freq % 0)))
+         (apply +)
+         )
+    )
   )
 
 (comment
@@ -42,6 +53,10 @@
 
   (answer-1 INPUT)
   ;; => 2192892
+
+  (answer-2 INPUT)
+  ;; => 22962826
+
 
 
   ;;
