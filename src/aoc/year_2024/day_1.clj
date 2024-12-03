@@ -41,13 +41,9 @@
         b-freq (frequencies b-list)]
     (->> a-list
          (map #(* % (get b-freq % 0)))
-         (apply +)
-         )
-    )
-  )
+         (apply +))))
 
 (comment
-
 
   (println INPUT)
 
@@ -56,8 +52,6 @@
 
   (answer-2 INPUT)
   ;; => 22962826
-
-
 
   ;;
   )
