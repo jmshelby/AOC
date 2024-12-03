@@ -40,8 +40,28 @@
        (filter safe-report?)
        count))
 
+(defn- vremove
+  "Remove element from vector, not sure how fast this is ..."
+  [i coll]
+  (concat (subvec coll 0 i)
+          (subvec coll (inc i))))
+
+(defn- sparsify
+  "Given a single report, reports all
+  possible reports with missing levels."
+  [report]
+  (let [items (count report)]
+    (for [n (range items)]
+      (vremove n (vec report)))))
+
 (defn answer-2 [input]
-  )
+  (->> input
+       parse-input
+       (map (fn [report]
+              (some safe-report?
+                    (sparsify report))))
+       (filter identity)
+       count))
 
 (comment
 
@@ -60,6 +80,7 @@
   ;; => 369
 
   (answer-2 INPUT)
+  ;; => 428
 
   ;;
   )
