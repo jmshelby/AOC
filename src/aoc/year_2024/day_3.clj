@@ -5,29 +5,61 @@
 
 (def INPUT (aoc/get-my-input))
 
-(defn- parse-input [in]
-  )
-
 (defn answer-1 [input]
-  )
+  (->> input
+       (re-seq #"mul\((\d{1,3}),(\d{1,3})\)")
+       (map (fn [[_ a b]]
+              (* (parse-long a)
+                 (parse-long b))))
+       (apply +)))
 
 (defn answer-2 [input]
-  )
+  (let [insts
+        (->> input
+             (re-seq #"don't\(\)|do\(\)|mul\((\d{1,3}),(\d{1,3})\)")
+             (map (fn [[f a b]]
+                    {:fn   (cond (s/starts-with? f "mul")   :mult
+                                 (s/starts-with? f "don't") :dont
+                                 (s/starts-with? f "do")    :do)
+                     :args (when a (map parse-long [a b]))
+                     })))]
+    (loop [total 0
+           flag  true
+           insts insts]
+      (if (seq insts)
+        (let [inst (first insts)]
+          ;; Next
+          (cond
+            ;; Allowed to multiply
+            (and flag
+                 (= :mult (:fn inst)))
+            ;; Mult
+            (recur (+ total (apply * (:args inst))) flag (rest insts))
+
+            ;; Not allowed to multiply
+            (and (not flag)
+                 (= :mult (:fn inst)))
+            ;; Don't Mult
+            (recur total flag (rest insts))
+
+            ;; Change flag - off
+            (= :dont (:fn inst))
+            (recur total false (rest insts))
+
+            ;; Change flag - on
+            (= :do (:fn inst))
+            (recur total true (rest insts))))
+        ;; Term
+        total))))
 
 (comment
 
-  (->>
-    (partition 50 INPUT)
-    (map s/join)
-    )
-
-  (def sample "xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))")
-
-  (parse-input INPUT)
 
   (answer-1 INPUT)
+  ;; => 167650499
 
   (answer-2 INPUT)
+  ;; => 95846796
 
   ;;
   )
