@@ -1,6 +1,7 @@
 (ns aoc.year-2024.day-4
   (:require [clojure.string :as s]
             [clojure.set :as set]
+            [clojure.pprint :as pprint]
             [aoc.client :as aoc]))
 
 (def INPUT (aoc/get-my-input))
@@ -26,6 +27,11 @@
           ;; No more left to check, break
           ixs)))))
 
+(defn- rotate-grid [grid]
+  (let [;; Initial cols, empty rows of cols
+        init (repeat (count (first grid)) [])]
+    (reduce #(map conj %1 %2) init grid)))
+
 (defn answer-1 [input]
   )
 
@@ -47,6 +53,46 @@ SAXAMASAAA
 MAMMMXMMMM
 MXMXAXMASX")
 
+  ;; pprint/pprint
+
+
+  ;; Main view
+  (->> sample
+       s/split-lines
+       (map (partial apply vector))
+       (map (partial vec-search KEY ))
+       )
+;; => ([5] [] [] [] [0] [] [] [] [] [5])
+
+  ;; Reversed view
+  (->> sample
+       s/split-lines
+       (map (partial apply vector))
+       (map reverse)
+       (map (partial vec-search KEY ))
+       )
+  ;; => ([] [5] [] [] [3] [] [] [] [] [])
+
+  ;; Column view
+  (->> sample
+       s/split-lines
+       (map (partial apply vector))
+       rotate-grid
+       (map (partial vec-search KEY ))
+       )
+  ;; => ([] [] [] [] [] [] [] [] [] [3])
+
+  ;; Column, reversed view
+  (->> sample
+       s/split-lines
+       (map (partial apply vector))
+       rotate-grid
+       (map reverse)
+       (map (partial vec-search KEY ))
+       )
+  ;; => ([] [] [] [] [] [] [5] [] [] [0])
+
+
   (->> sample
        s/split-lines
        (map (partial apply vector))
@@ -55,20 +101,12 @@ MXMXAXMASX")
 
   (->> INPUT
        s/split-lines
-       ;; first
-       count
+       first
+
        )
 
   (take 5 [  ])
 
-
-  (let [in     "somestuff jke some other stuff jake again other things"
-        in     (apply vector in)
-        search (apply vector "jake")
-        ]
-    (vec-search search in)
-    )
-;; => [10 32]
 
 
 
