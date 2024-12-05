@@ -37,98 +37,28 @@
           ;; No more left to check, break
           ixs)))))
 
+;; Given a rectangular grid, return new grid rotated 90 degrees
 (defn- rotate-grid [grid]
   (let [;; Initial cols, empty rows of cols
         init (repeat (count (first grid)) [])]
     (reduce #(map conj %1 %2) init grid)))
 
-(defn answer-1 [input]
-  )
-
-(defn answer-2 [input]
-  )
-
-(comment
-
-  (println INPUT)
-
-  (def sample "MMMSXXMASM
-MSAMXMSMSA
-AMXSXMAAMM
-MSAMASMSMX
-XMASAMXAMM
-XXAMMXXAMA
-SMSMSASXSS
-SAXAMASAAA
-MAMMMXMMMM
-MXMXAXMASX")
-
-  ;; pprint/pprint
-
-
-  ;; Main view
-  (->> sample
-       s/split-lines
-       (map (partial apply vector))
-       (map (partial vec-search KEY ))
-       )
-;; => ([5] [] [] [] [0] [] [] [] [] [5])
-
-  ;; Reversed view
-  (->> sample
-       s/split-lines
-       (map (partial apply vector))
-       (map reverse)
-       (map (partial vec-search KEY ))
-       )
-  ;; => ([] [5] [] [] [3] [] [] [] [] [])
-
-  ;; Column view
-  (->> sample
-       s/split-lines
-       (map (partial apply vector))
-       rotate-grid
-       (map (partial vec-search KEY ))
-       )
-  ;; => ([] [] [] [] [] [] [] [] [] [3])
-
-  ;; Column, reversed view
-  (->> sample
-       s/split-lines
-       (map (partial apply vector))
-       rotate-grid
-       (map reverse)
-       (map (partial vec-search KEY ))
-       )
-  ;; => ([] [] [] [] [] [] [5] [] [] [0])
-
-
-  (->> sample
-       s/split-lines
-       (map (partial apply vector))
-       )
-
-  (let [sample       [[1 2 3]
-                      [4 5 6]
-                      [7 8 9]]
-        ;; ====
-        grid         sample
-        ;; Mark some important cells
+;; Given a rectangular grid, return diaganols as rows
+(defn- diag-rows [grid]
+  (let [;; Mark some important cells
         top-right    [0 (-> grid first count dec)]
         bottom-left  [(-> grid count dec) 0]
         ;; Fns
         conj-in-last (fn [coll x]
                        (let [last-idx (-> coll count dec)]
-                         (update coll last-idx conj x)))
-        ]
+                         (update coll last-idx conj x)))]
 
     (loop [;; Start w/one empty row
            rows [[]]
            ;; Start at top/right most cell
-           cell top-right
-           ]
+           cell top-right]
 
-      (println {:rows rows :cell cell})
+      ;; (println {:rows rows :cell cell})
 
       ;; Check if we should continue,
       ;; stop _after_ bottom/left most cell
@@ -164,15 +94,76 @@ MXMXAXMASX")
                    [0 (- (LEFT cell) (TOP cell) 1)]
 
                    ;; Not sure why we're here
-                   :else (throw (Exception. "huh?"))))))
-      )
-    )
-;; => [[3] [2 6] [1 5 9] [4 8] [7]]
+                   :else (throw (Exception. "huh?")))))))))
+
+(defn answer-1 [input]
+  )
+
+(defn answer-2 [input]
+  )
+
+(comment
+
+  (println INPUT)
+
+  (def sample "MMMSXXMASM
+MSAMXMSMSA
+AMXSXMAAMM
+MSAMASMSMX
+XMASAMXAMM
+XXAMMXXAMA
+SMSMSASXSS
+SAXAMASAAA
+MAMMMXMMMM
+MXMXAXMASX")
+
+  ;; pprint/pprint
+
+
+  ;; Main view
+  (->> sample
+       s/split-lines
+       (map (partial apply vector))
+       (map (partial vec-search KEY ))
+       )
+  ;; => ([5] [] [] [] [0] [] [] [] [] [5])
+
+  ;; Reversed view
+  (->> sample
+       s/split-lines
+       (map (partial apply vector))
+       (map reverse)
+       (map (partial vec-search KEY ))
+       )
+  ;; => ([] [5] [] [] [3] [] [] [] [] [])
+
+  ;; Column view
+  (->> sample
+       s/split-lines
+       (map (partial apply vector))
+       rotate-grid
+       (map (partial vec-search KEY ))
+       )
+  ;; => ([] [] [] [] [] [] [] [] [] [3])
+
+  ;; Column, reversed view
+  (->> sample
+       s/split-lines
+       (map (partial apply vector))
+       rotate-grid
+       (map reverse)
+       (map (partial vec-search KEY ))
+       )
+  ;; => ([] [] [] [] [] [] [5] [] [] [0])
+
 
   (->> sample
        s/split-lines
        (map (partial apply vector))
+       (apply vector)
+       diag-rows
        )
+
 
   (answer-1 INPUT)
 
