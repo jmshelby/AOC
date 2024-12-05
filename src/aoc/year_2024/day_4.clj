@@ -122,17 +122,18 @@ MXMXAXMASX")
                          (update coll last-idx conj x)))
         ]
 
-
-    (update [[1 2] [3 4] [5 6]] 2 conj 'a)
-
     (loop [;; Start w/one empty row
            rows [[]]
            ;; Start at top/right most cell
            cell top-right
            ]
+
+      (println {:rows rows :cell cell})
+
       ;; Check if we should continue,
       ;; stop _after_ bottom/left most cell
-      (if (= cell (inc-diag bottom-left))
+      (if (or (< 100 (count rows)) ;; failsafe
+              (= cell (inc-diag bottom-left)))
         ;; Done, Return our diaganol rows
         rows
 
@@ -146,40 +147,32 @@ MXMXAXMASX")
           ;; Start new diag-row
           (recur (conj rows [])
                  ;; Determine next cell
-
                  (cond
                    ;; Square, start going down,
                    ;; (middle point, where we're currently off the board bottom-right most)
                    (apply = cell)
                    [1 0] ;; happens to be static
 
-                   ;; Continue going down
+                   ;; Continue going down (magic/special math)
                    (> (TOP cell) (LEFT cell))
-                   [(inc (TOP cell)) 0]
+                   ;; TOP - LEFT + 1 (not sure why yet...)
+                   [(inc (- (TOP cell) (LEFT cell))) 0]
 
-                   ;; Continue going left
+                   ;; Continue going left (magic math)
                    (> (LEFT cell) (TOP cell))
-                   [0 (dec (LEFT cell))]
+                   ;; LEFT - TOP - 1 (not sure why yet...)
+                   [0 (- (LEFT cell) (TOP cell) 1)]
 
                    ;; Not sure why we're here
-                   :else (throw (Exception. "huh?")))
+                   :else (throw (Exception. "huh?"))))))
+      )
+    )
+;; => [[3] [2 6] [1 5 9] [4 8] [7]]
 
-                 )))))
-
-
-
-  (inc-diag [0 0])
-
-  (->> INPUT
+  (->> sample
        s/split-lines
-       first
-
+       (map (partial apply vector))
        )
-
-  (take 5 [  ])
-
-
-
 
   (answer-1 INPUT)
 
@@ -187,19 +180,28 @@ MXMXAXMASX")
 
   ;;
   )
+;; 1/10 -> 0/8
+;; 2/10 -> 0/7
+;; 3/10 -> 0/6
+;; 4/10 -> 0/5
+;; 5/10 -> 0/4
+;; 6/10 -> 0/3
+;; 7/10 -> 0/2
+;; 8/10 -> 0/1
+;; 9/10 -> 0/0
 
+;; 10/9 -> 2/0
+;; 10/8 -> 3/0
 
-
-((\M \S \A \M \x \X \S \M \M \M)
- (\A \S \M \S \M \X \M \A \S \M \J  )
- (\M \M \A \A \M \X \S \X \M \A)
- (\X \M \S \M \S \A \M \A \S \M)
- (\M \M \A \X \M \A \S \A \M \X)
- (\A \M \A \X \X \M \M \A \X \X    )
- (\S \S \X \S \A \S \M \S \M \S \J    )
- (\A \A \A \S \A \M \A \X \A \S)
- (\m \M \M \M \X \M \M \M \A \M)
- (\X \S \A \M \X \A \X \M \X \M  )
- (         \J)
-
- )
+;; ([\M \M \M \S \X \* \m \A \s \M]
+;;  [\- \S \A \M \X \M \S \m \S \A \%   ]
+;;  [\A \- \X \S \X \M \A \A \m \M]
+;;  [\M \S \- \M \A \S \M \S \M \x]
+;;  [\X \M \A \- \A \M \X \A \M \M \*   ]
+;;  [\X \X \A \M \- \X \X \A \M \A]
+;;  [\S \M \S \M \S \- \S \X \S \S]
+;;  [\S \A \X \A \M \A \- \A \A \A]
+;;  [\M \A \M \M \M \X \M \- \M \M]
+;;  [\M \X \M \X \A \X \M \A \- \X]
+;;  [                           \J ]
+;;  )
