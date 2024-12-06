@@ -149,9 +149,41 @@
     cell
     [(inc top) (dec left)]]])
 
+(defn- *answer-2 [input]
+  (let [grid (->> input
+                  s/split-lines
+                  (map (partial apply vector))
+                  vec)
+        KEY  [\M \A \S]
+        ;; Find potential center "A" points, and their neighbors
+        prep (for [top  (range (count grid))
+                   left (range (count grid))]
+               [[top left]
+                (when (= \A (get-in grid [top left]))
+                  (->> (x-bors-coords [top left])
+                       (mapv (fn [pair]
+                               (mapv #(get-in grid %) pair)))))])]
+    ;; Find X-MAS
+    (->> prep
+         ;; Filter some things out
+         (filter #(second %))
+         (mapv (fn [[cell sub-grid]]
+                 (let [matches
+                       (mapv (fn [sub-seq]
+                               (or (= KEY sub-seq)
+                                   (= KEY (reverse sub-seq))))
+                             sub-grid)]
+                   {:cell        cell
+                    :x-bors      sub-grid
+                    :matches     matches
+                    :full-match? (every? identity matches)}))))))
 
 (defn answer-2 [input]
-  )
+  (let [analysis (*answer-2 input)]
+    ;; Just get the count of complete matches
+    (->> analysis
+         (filter :full-match?)
+         count)))
 
 (comment
 
@@ -177,41 +209,11 @@ MXMXAXMASX")
        diag-rows
        )
 
-  (->> sample
-       ;; *answer-1
-       answer-1
-       )
+  (answer-1 INPUT)
+  ;; => 2551
 
-  (def sample-2 ".M.S......
-..A..MSMS.
-.M.S.MAA..
-..A.ASMSM.
-.M.S.M....
-..........
-S.S.S.S.S.
-.A.A.A.A..
-M.M.M.M.M.
-..........")
-
-
-
-  (let [grid (->> sample-2
-                  s/split-lines
-                  (map (partial apply vector))
-                  vec)]
-    (for [top  (range (count grid))
-          left (range (count grid))
-          ]
-      [[top left]
-       (when (= \A (get-in grid [top left]))
-         (x-bors-coords [top left])
-         )]
-      ))
-
-    (answer-1 INPUT)
-    ;; => 2551
-
-    (answer-2 INPUT)
+  (answer-2 INPUT)
+  ;; => 1985
 
     ;;
     )
