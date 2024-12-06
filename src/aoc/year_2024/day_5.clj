@@ -38,8 +38,39 @@
                               (mapv #(s/split % #"\,"))
                               (mapv #(mapv parse-long %))))))))
 
+;; Parse input, analize page updates and violations, return details
+(defn- *answer-1 [input]
+  (let [{:keys [rules pages]
+         :as   params}
+        (parse-input input)]
+    (assoc params :analysis
+           (->> pages
+                (map (fn [page-seq]
+                       (let [rev-pairs (-> page-seq
+                                           reverse vec
+                                           ordered-pairs
+                                           set)]
+                         {:page-seq
+                          page-seq
+                          :rule-violations
+                          (set/intersection rules rev-pairs)
+                          })))))))
+
+(defn get-middle-elem [coll]
+  (when (-> coll count even?)
+    (throw (Exception. "Can't get the middle element of an even counted list")))
+  (get coll
+       (/ (dec (count coll)) 2)))
+
 (defn answer-1 [input]
-  )
+  ;; Analyze, filter out page order violations,
+  ;; sum the middle page of each
+  (->> (*answer-1 input)
+       :analysis
+       (filter #(zero? (count (:rule-violations %))))
+       (map :page-seq)
+       (map get-middle-elem)
+       (apply +)))
 
 (defn answer-2 [input]
   )
@@ -79,22 +110,10 @@
 
   ;; pprint/pprint
 
-
-  (let [coll '[a b c d e f g h]]
-    (ordered-pairs coll)
-    )
-
-
-  (let [params (parse-input sample)]
-    (assoc params :rule-set #{})
-    )
-
-
-
-
   (println INPUT)
 
   (answer-1 INPUT)
+  ;; => 5248
 
   (answer-2 INPUT)
 
