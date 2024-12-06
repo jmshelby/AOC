@@ -72,6 +72,45 @@
        (map get-middle-elem)
        (apply +)))
 
+;; ===========================================
+
+;; Find first exact element, return index
+(defn- search-vector [coll key]
+  (->> coll
+       (map-indexed vector)
+       (some (fn [[i elem]]
+               (when (= key elem)
+                 i)))))
+
+;; Remove element from vector, by index
+(defn- remove-elem [coll idx]
+  (vec (concat (subvec coll 0 idx)
+               (subvec coll (inc idx)))))
+
+;; Add element to vector, injecting it at
+;; given index, shifting the remaining items
+(defn- inject-elem [coll idx elem]
+  (vec (concat (subvec coll 0 idx)
+               [elem]
+               (subvec coll idx))))
+
+;; Ensure a is before b, if not,
+;; move b to directly after a
+(defn- ensure-order [coll a b]
+  (let [aidx (search-vector coll a)
+        bidx (search-vector coll b)]
+    ;; Only if b is before a...
+    (if (< bidx aidx)
+      ;; Move elements around
+      (let [;; Remove b
+            removed (remove-elem coll bidx)]
+        ;; Inject b directly after a,
+        ;; same aidx as original since
+        ;; it's shifted after removal
+        (inject-elem removed aidx b))
+      ;; Return untouched
+      coll)))
+
 (defn answer-2 [input]
   )
 
@@ -111,6 +150,17 @@
   ;; pprint/pprint
 
   (println INPUT)
+
+
+  (ensure-order [1 2 3 4 5 6 7 8] 3 6)
+
+  (->> (*answer-1 sample)
+       :analysis
+       (filter #(not (zero? (count (:rule-violations %)))))
+       ;; (map :page-seq)
+       ;; (map get-middle-elem)
+       ;; (apply +)
+       )
 
   (answer-1 INPUT)
   ;; => 5248
