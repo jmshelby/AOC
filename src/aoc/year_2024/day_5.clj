@@ -6,6 +6,19 @@
 
 (def INPUT (aoc/get-my-input))
 
+;; Given a list length, return all
+;; ordered-pair start and end indexes
+(defn- combos [len]
+  (for [s     (range len)
+        e     (range len)
+        :when (< s e)]
+    [s e]))
+
+;; Given a list, return all ordered pair elements
+(defn- ordered-pairs [coll]
+  (->> (combos (count coll))
+       (mapv #(mapv coll %))))
+
 (defn- parse-input [in]
   (let [[rules pages]
         (->> in
@@ -18,7 +31,8 @@
         (update :rules (fn [rule]
                          (->> rule
                               (mapv #(s/split % #"\|"))
-                              (mapv #(mapv parse-long %)))))
+                              (mapv #(mapv parse-long %))
+                              set)))
         (update :pages (fn [page]
                          (->> page
                               (mapv #(s/split % #"\,"))
@@ -65,9 +79,18 @@
 
   ;; pprint/pprint
 
-  (let [params (parse-input sample)]
-    params
+
+  (let [coll '[a b c d e f g h]]
+    (ordered-pairs coll)
     )
+
+
+  (let [params (parse-input sample)]
+    (assoc params :rule-set #{})
+    )
+
+
+
 
   (println INPUT)
 
