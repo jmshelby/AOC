@@ -68,7 +68,7 @@
 
       ;; Check if we should continue,
       ;; stop _after_ bottom/left most cell
-      (if (or (< 100 (count rows)) ;; failsafe
+      (if (or (< 100000 (count rows)) ;; failsafe
               (= cell (inc-diag bottom-left)))
         ;; Done, Return our diaganol rows
         rows
@@ -127,7 +127,13 @@
                              (into {})))))
 
 (defn answer-1 [input]
-  )
+  (let [analysis (*answer-1 input)]
+    ;; We'll just return the total count of found sub-sequences
+    (->> analysis
+         :search
+         vals
+         flatten
+         count)))
 
 (defn answer-2 [input]
   )
@@ -149,76 +155,6 @@ MXMXAXMASX")
 
   ;; pprint/pprint
 
-
-  ;; Main view
-  (->> sample
-       s/split-lines
-       (map (partial apply vector))
-       (map (partial vec-search KEY ))
-       )
-  ;; => ([5] [] [] [] [0] [] [] [] [] [5])
-
-  ;; Reversed view
-  (->> sample
-       s/split-lines
-       (map (partial apply vector))
-       (map reverse)
-       (map (partial vec-search KEY ))
-       )
-  ;; => ([] [5] [] [] [3] [] [] [] [] [])
-
-  ;; Column view
-  (->> sample
-       s/split-lines
-       (map (partial apply vector))
-       rotate-grid
-       (map (partial vec-search KEY ))
-       )
-  ;; => ([] [] [] [] [] [] [] [] [] [3])
-
-  ;; Column, reversed view
-  (->> sample
-       s/split-lines
-       (map (partial apply vector))
-       rotate-grid
-       (map reverse)
-       (map (partial vec-search KEY ))
-       )
-  ;; => ([] [] [] [] [] [] [5] [] [] [0])
-
-  ;; Diagonal view
-  (->> sample
-       s/split-lines
-       (map (partial apply vector))
-       (apply vector) ;; gotta do this for diag-rows
-       diag-rows
-       (map (partial vec-search KEY))
-       )
-  ;; => ([] [] [] [] [] [0] [] [] [] [] [] [] [] [] [] [] [] [] [])
-
-  ;; Diagonal, reversed view
-  (->> sample
-       s/split-lines
-       (map (partial apply vector))
-       (apply vector) ;; gotta do this for diag-rows
-       diag-rows
-       (map reverse)
-       (map (partial vec-search KEY))
-       )
-  ;; => ([] [] [] [] [] [] [] [] [3] [0] [] [] [] [0] [] [0] [] [] [])
-
-  ;; Columned diagonals view
-  (->> sample
-       s/split-lines
-       (map (partial apply vector))
-       rotate-grid
-       (map sort)
-       (apply vector) ;; gotta do this for diag-rows
-       ;; diag-rows
-       ;; (map (partial vec-search KEY ))
-       )
-
-
   (->> sample
        s/split-lines
        (map (partial apply vector))
@@ -226,46 +162,15 @@ MXMXAXMASX")
        diag-rows
        )
 
-
-
-  (let [small-sample [[1 2 3]
-                      [4 5 6]
-                      [7 8 9]]
-        ;; sample       small-sample
-        ;; Parse outer example
-        sample       (->> sample
-                          s/split-lines
-                          (map (partial apply vector))
-                          (apply vector))
-        ;; Prep our translations
-        prep         {:main         sample
-                      :translations {:t1-right      sample
-                                     :t1R-left      (reverse-grid sample)
-                                     :t2-down       (rotate-grid sample)
-                                     :t2R-up        (-> sample rotate-grid reverse-grid)
-                                     :t3-down-right (-> sample diag-rows)
-                                     :t3R-up-left   (-> sample diag-rows reverse-grid)
-                                     :t4-down-left  (-> sample reverse-grid diag-rows)
-                                     :t4R-up-right  (-> sample reverse-grid diag-rows reverse-grid)
-                                     }}]
-
-    (assoc prep :search (->> prep :translations
-                             (map (fn [[t rows]]
-                                    ;; For each translation, run the search
-                                    [t (map (partial vec-search KEY) rows)]))
-                             (into {})))
-    )
-
-
+  (->> sample
+       ;; *answer-1
+       answer-1
+       )
 
   (answer-1 INPUT)
+  ;; => 2551
 
   (answer-2 INPUT)
-
-
-
-
-
 
   ;;
   )
