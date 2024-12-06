@@ -135,6 +135,21 @@
          flatten
          count)))
 
+;; ============================
+
+;; Return the pair of coord sequences of a cell's X neighbors,
+;; down-left first, then down-right. Includes cell in each
+(defn- x-bors-coords [[top left :as cell]]
+  [;; Down-left
+   [[(dec top) (dec left)]
+    cell
+    [(inc top) (inc left)]]
+   ;; Down-right
+   [[(dec top) (inc left)]
+    cell
+    [(inc top) (dec left)]]])
+
+
 (defn answer-2 [input]
   )
 
@@ -167,10 +182,36 @@ MXMXAXMASX")
        answer-1
        )
 
-  (answer-1 INPUT)
-  ;; => 2551
+  (def sample-2 ".M.S......
+..A..MSMS.
+.M.S.MAA..
+..A.ASMSM.
+.M.S.M....
+..........
+S.S.S.S.S.
+.A.A.A.A..
+M.M.M.M.M.
+..........")
 
-  (answer-2 INPUT)
 
-  ;;
-  )
+
+  (let [grid (->> sample-2
+                  s/split-lines
+                  (map (partial apply vector))
+                  vec)]
+    (for [top  (range (count grid))
+          left (range (count grid))
+          ]
+      [[top left]
+       (when (= \A (get-in grid [top left]))
+         (x-bors-coords [top left])
+         )]
+      ))
+
+    (answer-1 INPUT)
+    ;; => 2551
+
+    (answer-2 INPUT)
+
+    ;;
+    )
