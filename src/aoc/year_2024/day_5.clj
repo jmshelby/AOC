@@ -96,7 +96,7 @@
 
 ;; Ensure a is before b, if not,
 ;; move b to directly after a
-(defn- ensure-order [coll a b]
+(defn- ensure-order [coll [a b]]
   (let [aidx (search-vector coll a)
         bidx (search-vector coll b)]
     ;; Only if b is before a...
@@ -112,7 +112,20 @@
       coll)))
 
 (defn answer-2 [input]
-  )
+  ;; Prep/Analyze same as answer 1
+  (->> (*answer-1 input)
+       :analysis
+       ;; Filter to the incorrect page sequences
+       (filter #(not (zero? (count (:rule-violations %)))))
+       ;; Attach a "corrected" versions, using violations
+       (map (fn [{:keys [page-seq rule-violations]
+                  :as   m}]
+              (assoc m :page-seq-corrected
+                     (reduce ensure-order page-seq (sort rule-violations)))))
+       ;; Extract middle elements and sum for answer checksum
+       (map :page-seq-corrected)
+       (map get-middle-elem)
+       (apply +)))
 
 (comment
 
@@ -152,21 +165,13 @@
   (println INPUT)
 
 
-  (ensure-order [1 2 3 4 5 6 7 8] 3 6)
-
-  (->> (*answer-1 sample)
-       :analysis
-       (filter #(not (zero? (count (:rule-violations %)))))
-       ;; (map :page-seq)
-       ;; (map get-middle-elem)
-       ;; (apply +)
-       )
+  (sort #{1 3 5 2 6 9})
 
   (answer-1 INPUT)
   ;; => 5248
 
   (answer-2 INPUT)
+  ;; => 4755
 
-
-;;
-)
+  ;;
+  )
