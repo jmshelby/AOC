@@ -146,9 +146,11 @@
 
   (answer-1 INPUT)
   ;; => 5248
+  ;; Elegant solution, but didn't help part 2...
 
   (answer-2 INPUT)
   ;; => 4507 (took 5 tries :( )
+  ;; For some reason I didn't think about using comparators ...
 
   ;;
   )
