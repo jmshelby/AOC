@@ -74,58 +74,38 @@
 
 ;; ===========================================
 
-;; Find first exact element, return index
-(defn- search-vector [coll key]
-  (->> coll
-       (map-indexed vector)
-       (some (fn [[i elem]]
-               (when (= key elem)
-                 i)))))
-
-;; Remove element from vector, by index
-(defn- remove-elem [coll idx]
-  (vec (concat (subvec coll 0 idx)
-               (subvec coll (inc idx)))))
-
-;; Add element to vector, injecting it at
-;; given index, shifting the remaining items
-(defn- inject-elem [coll idx elem]
-  (vec (concat (subvec coll 0 idx)
-               [elem]
-               (subvec coll idx))))
-
-;; Ensure a is before b, if not,
-;; move b to directly after a
-(defn- ensure-order [coll [a b]]
-  (let [aidx (search-vector coll a)
-        bidx (search-vector coll b)]
-    ;; Only if b is before a...
-    (if (< bidx aidx)
-      ;; Move elements around
-      (let [;; Remove b
-            removed (remove-elem coll bidx)]
-        ;; Inject b directly after a,
-        ;; same aidx as original since
-        ;; it's shifted after removal
-        (inject-elem removed aidx b))
-      ;; Return untouched
-      coll)))
+;; Given a set of pair-based rules,
+;; return a comparator based on them
+(defn- rules-comparator [rules]
+  (fn [a b]
+    (cond
+      ;; Correct order
+      (rules [a b])           -1
+      ;; Incorrect order
+      (rules [b a])           1
+      ;; No specified rule
+      (contains? rules [a b]) 0)))
 
 (defn answer-2 [input]
   ;; Prep/Analyze same as answer 1
-  (->> (*answer-1 input)
-       :analysis
-       ;; Filter to the incorrect page sequences
-       (filter #(not (zero? (count (:rule-violations %)))))
-       ;; Attach a "corrected" versions, using violations
-       (map (fn [{:keys [page-seq rule-violations]
-                  :as   m}]
-              (assoc m :page-seq-corrected
-                     (reduce ensure-order page-seq (sort rule-violations)))))
-       ;; Extract middle elements and sum for answer checksum
-       (map :page-seq-corrected)
-       (map get-middle-elem)
-       (apply +)))
+  (let [prep    (*answer-1 input)
+        my-comp (rules-comparator (:rules prep))]
+    (->> prep
+         :analysis
+         ;; Filter to the incorrect page sequences
+         (filter #(not (zero? (count (:rule-violations %)))))
+         ;; Attach a "corrected" versions, using violations
+         (map (fn [{:keys [page-seq]
+                    :as   m}]
+                (assoc m :page-seq-corrected
+                       (sort my-comp page-seq))))
+         ;; Extract middle elements and sum for answer checksum
+         (map :page-seq-corrected)
+         (map vec)
+         (map get-middle-elem)
+         (apply +)))
+
+  )
 
 (comment
 
@@ -164,14 +144,11 @@
 
   (println INPUT)
 
-
-  (sort #{1 3 5 2 6 9})
-
   (answer-1 INPUT)
   ;; => 5248
 
   (answer-2 INPUT)
-  ;; => 4755
+  ;; => 4507 (took 5 tries :( )
 
   ;;
   )
