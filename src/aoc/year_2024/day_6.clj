@@ -162,7 +162,59 @@
             t))
          )
     )
-;; 1703
+  ;; 1703
+
+
+  (time
+    (let [input     INPUT
+          grid      (parse-input input)
+          init      (initial-board  grid)
+          ;; Fn to tell us if the guard is bound to loop endlessly
+          is-stuck? (fn [state]
+                      ;; Is the gaurd in a previous orientation?
+                      ((-> state :guard-history set)
+                       (:guard state)))
+          ;; Get "end state" of original board
+          answer-1  (->> init
+                         (iterate advance-board)
+                         (take-while #(->> % :guard :pos
+                                           (on-board? (:height %) (:width %))))
+                         ;; One last advance (to get the guard off the map)
+                         last advance-board)
+          ;; Get all open coords to attempt barriers
+          open      (set (grid-filter grid (partial = \.)))
+          ;; Optimize by elimiating "dead" open spaces
+          open      (->> open
+                         (set/intersection (-> answer-1 :guard-pos-history set)))]
+      (->> open
+           ;; Map to each all "end states"
+           (pmap (fn [potential]
+                   (println "Trying potential " potential " (of " (count open)  " )")
+                   (->> potential
+                        ;; Add different barrier
+                        (update init :barriers conj)
+                        ;; Playout guard duty..
+                        (iterate advance-board)
+                        ;; ..until "end state"
+                        (take-while (fn [state]
+                                      (and (not (is-stuck? state))
+                                           (->> state :guard :pos
+                                                (on-board? (:height state) (:width state))))))
+                        last
+                        ;; Advance board one more, to get to that "end state" (take-while is *before* that)
+                        advance-board
+                        ;; Include this potential barrier
+                        (vector potential))))
+           ;; Filter to *good* blocking new barriers
+           (filter (fn [[_ state]] (is-stuck? state)))
+           count
+           ((fn [t]
+              (println "Found a count! : " t)
+              t))
+           )
+      ))
+
+
 
   (time
     (answer-1 INPUT))
